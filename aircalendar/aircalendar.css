@@ -1,0 +1,290 @@
+/*
+ * AirCalendar
+ * (c) 2019 Heracles Papatheodorou
+ * https://heracl.es
+ * MIT license
+ * 
+ */
+ 
+#calendar {
+	--text-color: 50, 50, 50;
+	--card-color: 255, 255, 255;
+	--border-color: 200, 200, 200;
+	--card-color-highlight: 255, 230, 250;
+	--border-color-highlight: 248, 128, 120;
+	--shadow-color: rgba(0,0,0,0.2);
+
+	/* minimum ratio is 0.7 */
+	--card-ratio: 0.7;
+}
+
+#events {
+	display: inline-flex;
+
+	height: 26em;
+	margin: 1em;
+
+	/*overflow-x: scroll;*/
+	/*overflow-y: hidden;*/
+}
+
+#events .error {
+	opacity: 0.5;
+}
+
+.h-event {
+	position: relative;
+	display: inline-block;
+	overflow: hidden;
+
+	margin: 0 0.5em 0;
+	padding: 0;
+	height: 25em;
+	min-width: 18em;
+	width:     calc(var(--card-ratio) * 25em);
+
+	background: rgba(var(--card-color));
+	border: 1px rgba(var(--border-color)) solid;
+	border-radius: 3px;
+	color: rgba(var(--text-color));
+	/*cursor: col-resize;*/
+	font-size: 100%;	
+	white-space: normal;
+
+	vertical-align: top;
+
+	-webkit-transition: all .3s;
+	-moz-transition   : all .3s;
+	transition        : all .3s;
+}
+	.h-event:not(.past):hover {
+		-webkit-box-shadow: 0.5em 0.5em var(--shadow-color);
+		box-shadow        : 0.5em 0.5em var(--shadow-color);
+		margin-top: -0.5em;
+	}
+
+.h-event:first-child {
+	margin-left: 0;
+}
+
+.h-event.hidden,
+.h-event.invalid {
+	display: none;
+}
+
+.h-event.past {
+	/*display: none;*/
+	opacity: 0.5;
+	border-style: dashed;
+}
+	.h-event.past .event-add {
+		display: none;
+	}
+
+.h-event.active {
+	--border-color: var(--border-color-highlight);
+	border-color: rgb(var(--border-color));
+	border-right-width : 3px;
+	border-bottom-width: 3px;
+}
+
+.h-event.highlight,
+.h-event .highlight {
+	--border-color: var(--border-color-highlight);
+	--text-color: var(--border-color-highlight);
+	border-color: rgb(var(--border-color));
+	color: rgb(var(--text-color));
+}
+
+.h-event figure {
+	position: relative;
+	overflow: hidden;
+
+	margin: 0;
+	width: 100%;
+	/*height: 9em;*/
+	height: 36%;
+
+	background: rgba(var(--border-color),0.2);
+	text-align: center;
+
+	clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 0.5em), 0% 100%);
+}
+
+.h-event.active figure,
+.h-event.highlight figure {
+	background: rgba(var(--border-color),0.2);
+}
+
+.h-event figure img {
+	width: 100%;
+	height: 100%;
+
+	object-position: 50% 50%;
+	object-fit: cover;
+}
+
+.h-event a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.h-event .p-category {
+	margin: 0.2em 0.6em;
+	padding:0;
+
+	font-size: 80%;
+	font-variant: small-caps;
+	text-transform: lowercase;
+}
+
+.h-event .event-context,
+.h-event .event-tags {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	
+	-moz-user-select: none;
+	user-select: none;
+}
+
+.h-event .tooltip:after {
+	content: '' attr(title) '';
+	display: block;		
+	box-sizing: border-box !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	padding: 1em;
+	width:100%;
+	/*height: 9.05em;*/
+	height: 36.2%;
+
+	background-repeat: no-repeat; 
+	background-image:
+		linear-gradient(to right, rgba(var(--border-color),0.2), rgba(var(--border-color),0.2)),
+		linear-gradient(to right, rgba(var(--card-color)), rgba(var(--card-color)));
+	background-position: 0 0, 0 0;
+	background-size: 100% 100%, 100% 100%;
+	color: rgb(var(--text-color));
+	white-space: normal;
+
+	opacity: 0;
+	pointer-events: none;
+
+	-webkit-transition: all .3s;
+	-moz-transition   : all .3s;
+	transition        : all .3s;
+	transition-delay: 0.3s;
+
+	clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 0.5em), 0% 100%);
+}
+	.h-event .tooltip:hover:after {
+		opacity: 1;
+		transition-delay: 0s;
+	}
+
+.h-event .event-context {
+	color: rgba(var(--text-color),0.5);
+}
+
+.h-event .p-name {
+	margin: 0.5em 0.4em 0;
+	padding: 0;
+
+	font-size: 1.2em;
+	line-height: 1;
+}
+
+.h-event .p-summary {
+	margin: 0.5em;
+	padding: 0;
+
+	line-height: 1.2;
+	font-size: 0.9em;
+	white-space: pre-wrap;
+}
+
+.h-event .p-summary a {
+	display: block;
+	height: 100%;
+}
+
+.h-event .p-summary a:after {
+	content: '  […]';
+
+	font-size: 0.7em;
+	line-height: 0.9em;
+}
+
+.h-event .p-location {
+	display: block;
+	margin: 0.5em;
+	padding: 0;
+	
+	color: rgba(var(--text-color),0.5);
+	font-size: 0.9em;
+
+}
+
+.h-event .p-location:after {
+	content: ' 🗺️';
+}
+
+.h-event .event-offset {
+	position: absolute;
+	bottom: 1.5em;
+	display: block;
+
+	padding: 0.5em;
+	font-size: 0.9em;
+	font-style: italic;
+}
+
+.h-event .event-duration {
+	position: absolute;
+	bottom: 0;
+
+	height: 1.3em;
+	width: 100%;
+	margin: 0;
+	padding: 0.5em;
+
+	color: rgba(var(--text-color),0.5);
+	font-size: 0.8em;
+	text-transform: uppercase;
+}
+
+.h-event time {
+	display: inline-block;
+
+	line-height: 1.3;
+}
+
+.h-event .dt-start {
+	padding-right: 0.3em;		
+}
+
+.h-event .event-add {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	display: block;
+	width: 2.1em;
+	height: 2em;
+
+	color: rgba(var(--text-color),0.5);
+	line-height: 2em;
+	font-size: 1em;
+	text-align: center;
+	
+	-moz-user-select: none;
+	user-select: none;
+}
+
+.h-event a:hover {
+	color: rgba(var(--border-color-highlight));
+	opacity: 1;
+}
