@@ -43,10 +43,10 @@ var loadCalendar = function(selector,lang) {
 
 
 	base(baseName).select({
-		sort: [{
+		/*sort: [{
 			field: 'offset',
 			direction: 'asc',
-		}],
+		}],*/
 		// filterByFormula: 'AND(lang = "' + lang + '")', // DEBUG, filter by language
 		// filterByFormula: 'AND(offset != -1)', // DEBUG, hide past events
 		view: baseView, // DEBUG, use view's sort and filters
