@@ -1,6 +1,6 @@
 # /aircalendar
 
-A card based calendar, powered by an [Airtable](https://airtable.com/invite/r/aUWahaKr). It includes helpful details such as countdowns, Google Calendar links, auto-magical sorting. See the demo at [https://arty2.github.io/aircalendar/](https://arty2.github.io/)
+A card based calendar, powered by an [Airtable](https://airtable.com/invite/r/aUWahaKr). It includes helpful details such as countdowns, Google Calendar links, auto-magical sorting. See the demo at [https://arty2.github.io/aircalendar/](https://arty2.github.io/aircalendar/)
 
 ![](./aircalendar__featured.png)
 
