@@ -48,7 +48,8 @@
 	border-radius: 3px;
 	color: rgba(var(--text-color));
 	/*cursor: col-resize;*/
-	font-size: 100%;	
+	font-size: 100%;
+	line-height: 1;
 	white-space: normal;
 
 	vertical-align: top;
@@ -247,7 +248,7 @@
 	position: absolute;
 	bottom: 0;
 
-	height: 1.3em;
+	/*height: 1.3em;*/
 	width: 100%;
 	margin: 0;
 	padding: 0.5em;
