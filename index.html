@@ -56,17 +56,17 @@
 		
 	</body>
 	<script>
-	var Airtable = require('airtable');
+		var Airtable = require('airtable');
 
-	// WARNING: By using your key here, you allow anyone to view (or edit) your base!
-	// Make sure your API (thus user) has read-only access!
-	// var base = new Airtable({ apiKey: 'FILL_OUT_API_KEY' }).base('FILL_OUT_BASE_ID');
+		// WARNING: By using your key here, you allow anyone to view (or edit) your base!
+		// Make sure your API (thus user) has read-only access!
+		// var base = new Airtable({ apiKey: 'FILL_OUT_API_KEY' }).base('FILL_OUT_BASE_ID');
 
-	var base = new Airtable({ apiKey: 'keyxYukKB3XJgAmDN' }).base('applE3FIAD9oZHALq');	
-	var baseName = 'EVENTS'; // name of your base
-	var baseView = 'Demo'; // view you want to include
+		var base = new Airtable({ apiKey: 'keyxYukKB3XJgAmDN' }).base('applE3FIAD9oZHALq');	
+		var baseName = 'EVENTS'; // name of your base
+		var baseView = 'Demo'; // view you want to include
 
-	loadCalendar( '#calendar #events', ($('html').attr('lang')? $('html').attr('lang') : 'en' ) );
-</script>
+		$().loadCalendar( '#calendar #events', ($('html').attr('lang')? $('html').attr('lang') : 'en' ) );
+	</script>
 <!-- <script src="http://localhost:88/live.js"></script> -->
 </html>

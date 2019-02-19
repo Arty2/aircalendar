@@ -5,8 +5,8 @@
  * MIT license
  * 
  */
-
-var loadCalendar = function(selector,lang) {
+(function($) {
+$.fn.loadCalendar = function(selector,lang) {
 	$(selector).empty();
 
 	var i18n = [];
@@ -308,4 +308,5 @@ var loadCalendar = function(selector,lang) {
 
 	});
 };
+})( jQuery );
 // end of file
