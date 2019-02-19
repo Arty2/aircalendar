@@ -29,4 +29,4 @@ This script and [its related Airtable base](https://airtable.com/shrTbeziWF56USa
 
 - [date.format.js](http://blog.stevenlevithan.com/archives/date-time-format) by [Steven Levithan](http://stevenlevithan.com)
 
-© 2019 [Heracles Papatheodorou](http://heracl.es) a.k.a [@Arty2](http://www.twitter.com/Arty2), [MIT Licence](LICENCE.txt)
+© 2019 [Heracles Papatheodorou](http://heracl.es) a.k.a [@Arty2](https://www.twitter.com/Arty2), [MIT Licence](LICENCE.txt)
