@@ -13,8 +13,10 @@ $.fn.loadCalendar = function(selector,lang) {
 	i18n['en'] = {
 		'no results': 'There are no upcoming events.',
 		'google calendar': 'Add to Google Calendar',
-		'timezone': 'Timezone: ',
+		'timezone': 'Timezone',
 		'unknown': 'Unknown end',
+		'year ago': 'One year ago',
+		'years ago': 'years ago',
 		'starts': 'Starts in',
 		'ends': 'Ends in',
 		'started': 'Event has started',
@@ -28,8 +30,10 @@ $.fn.loadCalendar = function(selector,lang) {
 	i18n['el'] = {
 		'no results': 'Δεν υπάρχουν προσεχείς εκδηλώσεις.',
 		'google calendar': 'Προσθήκη στο Google Calendar',
-		'timezone': 'Ζώνη ώρας: ',
+		'timezone': 'Ζώνη ώρας',
 		'unknown': 'Άγνωστη λήξη',
+		'year ago': 'Ένα χρόνo πριν',
+		'years ago': 'χρόνια πριν',
 		'starts': 'Αρχίζει σε',
 		'ends': 'Τελειώνει σε',
 		'started': 'Έχει αρχίσει',
@@ -63,7 +67,8 @@ $.fn.loadCalendar = function(selector,lang) {
 			var image = record.get('image');
 			var startDate = new Date((record.get('start') === undefined) ? Date.now() : record.get('start'));
 			var endDate = new Date(record.get('end'));
-			var lang = (record.get('lang') === undefined) ? 'en' : record.get('lang'); // DEBUG
+			var startDateOriginal = new Date(record.get('original-start'));
+			// var lang = (record.get('lang') === undefined) ? 'en' : record.get('lang'); // DEBUG
 
 			// add .invalid css class if there is no start date
 			var cssClass = (record.get('class') === undefined) ? (record.get('start') === undefined ? ['invalid'] : []) : record.get('class');
@@ -72,7 +77,7 @@ $.fn.loadCalendar = function(selector,lang) {
 			var tags = (record.get('tags') === undefined) ? [] : record.get('tags');
 
 			// create the time structure for duration
-			var duration = $('<p class="event-duration" title="' + i18n[lang]['timezone'] + startDate.format('Z') + '">');
+			var duration = $('<p class="event-duration" title="' + i18n[lang]['timezone'] + ': ' + startDate.format('Z') + '">');
 
 
 			// add the end date if different from start date
@@ -167,9 +172,12 @@ $.fn.loadCalendar = function(selector,lang) {
 					var offset = endDate.getTime();
 					var label = 'ends';
 				}
+			} else if (record.get('frequency') == 'YEARLY') {
+				var offset = startDateOriginal.getTime();
+				var label = 'yearly';
 			} else {
 				var offset = startDate.getTime();
-				var label = 'starts';
+				var label = 'unknown';
 			}
 
 			// only display if a positive value (i.e. not in the past)
@@ -251,6 +259,7 @@ $.fn.loadCalendar = function(selector,lang) {
 					var minutes = Math.floor(seconds/60);
 					var hours = Math.floor(minutes/60);
 					var days = Math.floor(hours/24);
+					var years = Math.floor(days/365);
 
 						hours = hours-(days*24);
 						minutes = minutes-(days*24*60)-(hours*60);
@@ -258,11 +267,12 @@ $.fn.loadCalendar = function(selector,lang) {
 
 					var countdown = i18n[$(this).attr('lang')][$(this).data('label')] + ' ';
 					var countdowndetails = countdown;
+console.log(years);
 
-					// if event has unknown end...
 					if ($(this).data('label') == 'unknown') {
+						// if event has unknown end...
 						countdown = i18n[$(this).attr('lang')]['started'];
-						countdowndetails = ''
+						countdowndetails = '';
 					} else if (offset.toString().slice(0,-3) == 0 && $(this).data('label') == 'ends') {
 						// $(this).removeClass('event-offset');
 						// $(this).remove();
@@ -277,15 +287,24 @@ $.fn.loadCalendar = function(selector,lang) {
 						countdown = i18n[$(this).attr('lang')]['started'];
 						countdowndetails = '';
 					} else if (days > 15 && $(this).data('label') == 'starts') {
+						// if event is more than 15 days in the future, then don't display countdown
 						$(this).remove();
-						// countdown = '';
-						// countdowndetails += days + ' ' + i18n[$(this).attr('lang')]['days'] + ', ';
+					} else if ($(this).data('label') == 'yearly' && years == -1) {
+						$(this).removeClass('event-offset').addClass('event-anniversary');
+						countdown = i18n[$(this).attr('lang')]['year ago'];
+						countdowndetails = '';
+					} else if ($(this).data('label') == 'yearly' && years < -1) {
+						$(this).removeClass('event-offset').addClass('event-anniversary');
+						countdown = Math.abs(years) + ' ' + i18n[$(this).attr('lang')]['years ago'];
+						countdowndetails = '';
 					} else if (days == 1) {
 						countdown += days + ' ' + i18n[$(this).attr('lang')]['day'];
 						countdowndetails += days + ' ' + i18n[$(this).attr('lang')]['day'] + ', ';
+						countdowndetails += hours.pad(2)+':'+minutes.pad(2)+':'+seconds.pad(2);
 					} else if (days > 0) {
 						countdown += days + ' ' + i18n[$(this).attr('lang')]['days'];
 						countdowndetails += days + ' ' + i18n[$(this).attr('lang')]['days'] + ', ';
+						countdowndetails += hours.pad(2)+':'+minutes.pad(2)+':'+seconds.pad(2);
 					} else if (hours == 1) {
 						countdown += hours + ' ' + i18n[$(this).attr('lang')]['hour'];
 					} else if (hours > 1) {
@@ -296,7 +315,7 @@ $.fn.loadCalendar = function(selector,lang) {
 					}
 
 					// countdowndetails += hours+i18n[$(this).attr('lang')]['h']+' '+minutes + '′ ' + seconds + '″'; // Alt style
-					countdowndetails += hours.pad(2)+':'+minutes.pad(2)+':'+seconds.pad(2);
+					// countdowndetails += hours.pad(2)+':'+minutes.pad(2)+':'+seconds.pad(2);
 
 					$(this).text(countdown).attr('title',countdowndetails);
 				});
