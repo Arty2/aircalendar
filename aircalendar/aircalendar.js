@@ -63,13 +63,19 @@ $.fn.loadCalendar = function(selector,lang) {
 
 		records.forEach(function(record) {
 			// console.log('Retrieved ', record.get('name')); // DEBUG
-
-			var image = record.get('image');
-			var startDate = new Date((record.get('start') === undefined) ? Date.now() : record.get('start'));
+			var now = new Date(Date.now());
+			var startDate = new Date((record.get('start') === undefined) ? now : record.get('start'));
 			var endDate = new Date(record.get('end'));
 			var startDateOriginal = new Date(record.get('original-start'));
+
+			if (!isNaN(record.get('no-timezone'))) {
+				startDate = new Date( (record.get('start') === undefined) ? now : record.get('start').slice(0, -1) + now.format('o') );
+				endDate = new Date( (record.get('end') === undefined) ? '' : record.get('end').slice(0, -1) + now.format('o') );
+			}
+
 			// var lang = (record.get('lang') === undefined) ? 'en' : record.get('lang'); // DEBUG
 
+			var image = record.get('image');
 			// add .invalid css class if there is no start date
 			var cssClass = (record.get('class') === undefined) ? (record.get('start') === undefined ? ['invalid'] : []) : record.get('class');
 
@@ -126,7 +132,11 @@ $.fn.loadCalendar = function(selector,lang) {
 
 			// add image if it exists
 			if (image != null) {
-				event.append($('<figure class="event-thumbnail">').append($('<img>', {'src':image[0].thumbnails.large.url})));
+				event.append($('<figure class="event-thumbnail">').append($('<img>', {
+					'src':image[0].thumbnails.large.url,
+					'itemprop':'image',
+					'content':image[0].thumbnails.large.url
+				})));
 			} else {
 				event.append($('<figure class="event-thumbnail">'));
 			}
@@ -138,7 +148,7 @@ $.fn.loadCalendar = function(selector,lang) {
 			event.append(category);
 
 			// add event name
-			event.append($('<h3 class="p-name">').text(record.get('name')));
+			event.append($('<h3 class="p-name" itemprop="name">').text(record.get('name')));
 
 			// add hyperlink
 			var summary = $('<p class="p-summary" itemprop="description">').text(record.get('summary'));
@@ -151,12 +161,17 @@ $.fn.loadCalendar = function(selector,lang) {
 
 			// add location
 			if (record.get('location') !== undefined) {
-				event.append($('<a class="p-location" target="_blank" href="https://www.google.com/maps?q='+encodeURI(record.get('location'))+'">').text( record.get('location')));
+				event.append($('<a class="p-location">').attr({
+						target:'_blank',
+						href:'https://www.google.com/maps?q='+encodeURI(record.get('location')),
+						itemprop:'location',
+						content:record.get('location')
+					}).text( record.get('location')));
+				// event.append($('<a class="p-location" target="_blank" href="https://www.google.com/maps?q='+encodeURI(record.get('location'))+'">').text( record.get('location')));
 			}
 
 			// add the offset (starts in... ends in... seconds)
 			// add a check, should be less than 15 days
-			var now = new Date(Date.now());
 
 			if (startDate < now && !isNaN(record.get('end-unknown'))) {
 				var offset = now;
@@ -267,7 +282,6 @@ $.fn.loadCalendar = function(selector,lang) {
 
 					var countdown = i18n[$(this).attr('lang')][$(this).data('label')] + ' ';
 					var countdowndetails = countdown;
-console.log(years);
 
 					if ($(this).data('label') == 'unknown') {
 						// if event has unknown end...
