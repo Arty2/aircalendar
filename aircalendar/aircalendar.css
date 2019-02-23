@@ -40,12 +40,13 @@
 	margin: 0 0.5em 0;
 	padding: 0;
 	height: 25em;
+	max-width: 90vw
 	min-width: 18em;
 	width:     calc(var(--card-ratio) * 25em);
 
 	background: rgba(var(--card-color));
 	border: 1px rgba(var(--border-color)) solid;
-	border-radius: 3px;
+	border-radius: 10px;
 	color: rgba(var(--text-color));
 	/*cursor: col-resize;*/
 	font-size: 100%;
@@ -227,14 +228,14 @@
 	
 	color: rgba(var(--text-color),0.5);
 	font-size: 0.9em;
-
 }
 
 .h-event .p-location:after {
 	content: ' 🗺️';
 }
 
-.h-event .event-offset {
+.h-event .event-offset,
+.h-event .event-anniversary {
 	position: absolute;
 	bottom: 1.5em;
 	display: block;
@@ -242,6 +243,10 @@
 	padding: 0.5em;
 	font-size: 0.9em;
 	font-style: italic;
+}
+
+.h-event .event-anniversary {
+	color: rgba(var(--text-color),0.5);
 }
 
 .h-event .event-duration {
