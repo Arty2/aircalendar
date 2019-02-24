@@ -28,6 +28,10 @@
 	/*overflow-y: hidden;*/
 }
 
+#events *, #events *:before, #events *:after {
+	box-sizing: border-box;
+}
+
 #events .error {
 	opacity: 0.5;
 }
@@ -59,11 +63,12 @@
 	-moz-transition   : all .3s;
 	transition        : all .3s;
 }
-	.h-event:not(.past):hover {
-		-webkit-box-shadow: 0.5em 0.5em var(--shadow-color);
-		box-shadow        : 0.5em 0.5em var(--shadow-color);
-		margin-top: -0.5em;
-	}
+
+.h-event:not(.past):hover {
+	-webkit-box-shadow: 0.5em 0.5em var(--shadow-color);
+	box-shadow        : 0.5em 0.5em var(--shadow-color);
+	margin-top: -0.5em;
+}
 
 .h-event:first-child {
 	margin-left: 0;
@@ -76,18 +81,19 @@
 
 .h-event.past {
 	/*display: none;*/
-	opacity: 0.5;
+	opacity: 0.6;
 	border-style: dashed;
 }
 	.h-event.past .event-add {
 		display: none;
 	}
 
-.h-event.active {
+.h-event.active,
+.h-event:focus {
 	--border-color: var(--border-color-highlight);
 	border-color: rgb(var(--border-color));
-	border-right-width : 3px;
-	border-bottom-width: 3px;
+	
+	border-width: 2px;
 }
 
 .h-event.highlight,
@@ -110,7 +116,7 @@
 	background: rgba(var(--border-color),0.2);
 	text-align: center;
 
-	clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 0.5em), 0% 100%);
+	clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 0.5em), 0% calc(100% - 0.1em));
 }
 
 .h-event.active figure,
@@ -153,8 +159,7 @@
 
 .h-event .tooltip:after {
 	content: '' attr(title) '';
-	display: block;		
-	box-sizing: border-box !important;
+	display: block;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -181,7 +186,7 @@
 	transition        : all .3s;
 	transition-delay: 0.3s;
 
-	clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 0.5em), 0% 100%);
+	clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 0.5em), 0% calc(100% - 0.1em));
 }
 	.h-event .tooltip:hover:after {
 		opacity: 1;
@@ -235,7 +240,7 @@
 }
 
 .h-event .event-offset,
-.h-event .event-anniversary {
+.h-event .event-label {
 	position: absolute;
 	bottom: 1.5em;
 	display: block;
@@ -245,7 +250,7 @@
 	font-style: italic;
 }
 
-.h-event .event-anniversary {
+.h-event .event-label {
 	color: rgba(var(--text-color),0.5);
 }
 
