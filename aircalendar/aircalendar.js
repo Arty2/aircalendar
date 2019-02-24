@@ -20,7 +20,7 @@ $.fn.loadCalendar = function(selector,lang) {
 		'starts': 'Starts in',
 		'ends': 'Ends in',
 		'started': 'Event has started',
-		'ended': 'Event has ended',
+		'ended': 'Event ended recently',
 		'day': 'day',
 		'days': 'days',
 		'h': 'h',
@@ -37,7 +37,7 @@ $.fn.loadCalendar = function(selector,lang) {
 		'starts': 'Αρχίζει σε',
 		'ends': 'Τελειώνει σε',
 		'started': 'Έχει αρχίσει',
-		'ended': 'Έχει τελειώσει',
+		'ended': 'Τελείωσε πρόσφατα',
 		'day': 'μέρα',
 		'days': 'μέρες',
 		'h': 'ω',
@@ -63,13 +63,14 @@ $.fn.loadCalendar = function(selector,lang) {
 
 		records.forEach(function(record) {
 			// console.log('Retrieved ', record.get('name')); // DEBUG
+			
 			var now = new Date(Date.now());
-			var startDate = new Date((record.get('start') === undefined) ? now : record.get('start'));
+			var startDate = new Date((record.get('start') === undefined) ? Date.now() : record.get('start'));
 			var endDate = new Date(record.get('end'));
 			var startDateOriginal = new Date(record.get('original-start'));
 
 			if (!isNaN(record.get('no-timezone'))) {
-				startDate = new Date( (record.get('start') === undefined) ? now : record.get('start').slice(0, -1) + now.format('o') );
+				startDate = new Date( (record.get('start') === undefined) ? Date.now() : record.get('start').slice(0, -1) + now.format('o') );
 				endDate = new Date( (record.get('end') === undefined) ? '' : record.get('end').slice(0, -1) + now.format('o') );
 			}
 
@@ -171,14 +172,18 @@ $.fn.loadCalendar = function(selector,lang) {
 			}
 
 			// add the offset (starts in... ends in... seconds)
-			// add a check, should be less than 15 days
 
-			if (startDate < now && !isNaN(record.get('end-unknown'))) {
-				var offset = now;
+			if (record.get('offset') == '-2') {
+				// if event has recently ended
+				var offset = '-2';
+				var label = 'ends';
+			} else if (startDate < now && !isNaN(record.get('end-unknown'))) {
+				// if event is in the past and has an unknown end
+				var offset = Date.now();
 				var label = 'unknown';
 			} else if (!isNaN(endDate) && endDate < now) {
-				// var offset = '';
-				// var label = '';
+				var offset = '-2';
+				var label = 'ends';
 			} else if (!isNaN(endDate) || !isNaN(record.get('end-unknown'))) {
 				if (startDate > now) {
 					var offset = startDate.getTime();
@@ -196,6 +201,7 @@ $.fn.loadCalendar = function(selector,lang) {
 			}
 
 			// only display if a positive value (i.e. not in the past)
+			// does it ever occur?
 			if (record.get('offset') != -1) {				
 				event.append($('<time class="event-offset" lang="' + lang + '">').data({
 					offset: offset,
@@ -238,7 +244,7 @@ $.fn.loadCalendar = function(selector,lang) {
 			}
 
 			// add class for where an event is in the past
-			if (record.get('offset') == '-1') {
+			if (record.get('offset') == '-1' || record.get('offset') == '-2') {
 				event.addClass('past');
 			}
 
@@ -266,9 +272,11 @@ $.fn.loadCalendar = function(selector,lang) {
 
 			// update the countdown
 			setInterval(function(){
-				var now = new Date(Date.now());
+				// var now = new Date(Date.now());
+				var now = Date.now();
 
-				$(selector + ' .h-event:not(.past) .event-offset').each(function() {
+				// $(selector + ' .h-event:not(.past) .event-offset').each(function() {
+				$(selector + ' .h-event .event-offset').each(function() {
 					var offset = $(this).data('offset') - now;
 					var seconds = Math.floor(offset/1000);
 					var minutes = Math.floor(seconds/60);
@@ -283,7 +291,17 @@ $.fn.loadCalendar = function(selector,lang) {
 					var countdown = i18n[$(this).attr('lang')][$(this).data('label')] + ' ';
 					var countdowndetails = countdown;
 
-					if ($(this).data('label') == 'unknown') {
+
+
+					// console.log($(this).data('offset')); // DEBUG
+
+					if ($(this).data('offset') == '-2') {
+						$(this).closest('.h-event').removeClass('active').addClass('past');
+						$(this).removeClass('event-offset').addClass('event-label');
+						$(this).addClass('highlight');
+						countdown = i18n[$(this).attr('lang')]['ended'];
+						countdowndetails = '';
+					} else if ($(this).data('label') == 'unknown') {
 						// if event has unknown end...
 						countdown = i18n[$(this).attr('lang')]['started'];
 						countdowndetails = '';
@@ -291,6 +309,7 @@ $.fn.loadCalendar = function(selector,lang) {
 						// $(this).removeClass('event-offset');
 						// $(this).remove();
 						$(this).closest('.h-event').removeClass('active').addClass('past');
+						$(this).removeClass('event-offset').addClass('event-label');
 						$(this).addClass('highlight');
 						countdown = i18n[$(this).attr('lang')]['ended'];
 						countdowndetails = '';
@@ -304,11 +323,11 @@ $.fn.loadCalendar = function(selector,lang) {
 						// if event is more than 15 days in the future, then don't display countdown
 						$(this).remove();
 					} else if ($(this).data('label') == 'yearly' && years == -1) {
-						$(this).removeClass('event-offset').addClass('event-anniversary');
+						$(this).removeClass('event-offset').addClass('event-label');
 						countdown = i18n[$(this).attr('lang')]['year ago'];
 						countdowndetails = '';
 					} else if ($(this).data('label') == 'yearly' && years < -1) {
-						$(this).removeClass('event-offset').addClass('event-anniversary');
+						$(this).removeClass('event-offset').addClass('event-label');
 						countdown = Math.abs(years) + ' ' + i18n[$(this).attr('lang')]['years ago'];
 						countdowndetails = '';
 					} else if (days == 1) {

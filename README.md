@@ -4,10 +4,27 @@ A card based calendar, powered by an [Airtable](https://airtable.com/invite/r/aU
 
 ![](./aircalendar__featured.png)
 
-Plug in a specific Airtable view and make use of it’s filters. In the example provided, events are sorted with the following formula: `IF(NOW()<{end}, DATETIME_DIFF(NOW(),{end}) , IF({end},-1,IF(NOW()<{start},DATETIME_FORMAT({start},'x'),IF({end-unknown},DATETIME_DIFF(NOW(),DATEADD(NOW(),3,'days')),-1))) )` that gives priority to events that end soon, and moves upcoming events to the top, even if they haven’t started yet.
-
 This script and [its related Airtable base](https://airtable.com/shrTbeziWF56USaZd) may change breaking compatibility. Designed with multilingual websites (i18n) in mind. Underlying code is quickly hacked together, but fully functional and should work even with missing fields.
 
+Plug in a specific Airtable view and make use of it’s filters. In the example provided, events are sorted with the following formula, that gives priority to events that end soon, and moves upcoming events to the top, even if they haven’t started yet.
+
+```
+IF( NOW() < {end},
+    DATETIME_DIFF( NOW(), {end} ),
+    IF( {end},
+        IF( NOW() < DATEADD( {end}, 1, 'days'),
+            -2,
+            -1
+        ),
+        IF( NOW() < {start},
+            DATETIME_FORMAT( {start}, 'x' ),
+            IF( {end-unknown},
+                DATETIME_DIFF( NOW(), DATEADD( NOW(), 3, 'days' ) ),
+                -1)
+        )
+    )
+)
+```
 
 ![](./aircalendar_01.png)
 
